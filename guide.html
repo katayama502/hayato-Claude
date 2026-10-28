@@ -1,0 +1,582 @@
+<!doctype html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<title>AI会社のつくり方</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<meta name="description" content="はじめての人向けに、Claudeで会社の組織を設計し、スキルとエージェントで回すまでを8ステップで解説します。">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,800&family=JetBrains+Mono:wght@400;600&family=Zen+Kaku+Gothic+New:wght@400;500;700;900&display=swap">
+<style>
+/* Layout: guide hero with character → glossary cards → 8 numbered chapters (character speech + prompt + template) → FAQ → checklist. Sticky chapter rail on phone, side TOC on desktop. */
+:root{
+  color-scheme:dark;
+  --bg:#07080B; --surface:#101217; --surface-2:#161920; --ink:#F2F3F5; --muted:#8E96A3; --line:#22262E;
+  --accent:#41E2C8; --accent-soft:rgba(65,226,200,.12);
+  --m-idea:#8F7CFF; --m-build:#41E2C8; --m-media:#F07AD8; --m-write:#F2A46E;
+  --code-bg:#000;
+  --shadow:0 40px 80px -40px rgba(0,0,0,.9);
+  --f-display:"Bricolage Grotesque","Zen Kaku Gothic New","Hiragino Sans",system-ui,sans-serif;
+  --f-jp:"Zen Kaku Gothic New","Hiragino Sans","Yu Gothic",system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,"SFMono-Regular",Menlo,monospace;
+  --r-lg:26px; --r-md:16px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:var(--f-jp);font-size:16px;line-height:1.85;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:60;background:var(--bg)}
+img{max-width:100%}
+[hidden]{display:none!important}
+h1,h2,h3{margin:0;text-wrap:balance;font-weight:900;letter-spacing:-.01em}
+p{margin:0}
+a{color:inherit}
+:focus-visible{outline:2.5px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1180px;margin:0 auto;padding-left:max(20px,env(safe-area-inset-left,0px));padding-right:max(20px,env(safe-area-inset-right,0px))}
+.eyebrow{font-family:var(--f-mono);font-size:12.5px;letter-spacing:.08em;color:var(--accent);text-transform:uppercase;display:inline-flex;gap:8px;align-items:center}
+.eyebrow::before{content:"";width:18px;height:1.5px;background:currentColor}
+.muted{color:var(--muted)}
+
+/* nav + progress */
+.nav{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;backdrop-filter:saturate(1.6) blur(18px);-webkit-backdrop-filter:saturate(1.6) blur(18px);background:rgba(7,8,11,.78);border-bottom:1px solid var(--line)}
+.nav .wrap{display:flex;align-items:center;justify-content:space-between;height:56px;gap:16px}
+.brand{font-family:var(--f-display);font-weight:800;font-size:17px;text-decoration:none;display:flex;gap:10px;align-items:center;white-space:nowrap}
+.brand i{width:10px;height:10px;border-radius:50%;background:var(--accent);box-shadow:0 0 0 4px var(--accent-soft)}
+.back{font-size:13.5px;color:var(--muted);text-decoration:none;white-space:nowrap}
+.back:hover{color:var(--ink)}
+.progress{position:absolute;left:0;bottom:-1px;height:2px;width:100%;background:linear-gradient(90deg,var(--m-build),var(--m-idea),var(--m-media));transform-origin:left;transform:scaleX(var(--p,0))}
+.rail{display:none}
+
+/* hero */
+.hero{position:relative;isolation:isolate;overflow:hidden;padding-block:clamp(40px,7vw,96px)}
+.hero .wrap{display:grid;grid-template-columns:1.1fr .9fr;gap:clamp(28px,5vw,64px);align-items:center}
+.aurora{position:absolute;inset:-20% -10% auto;height:120%;z-index:-1;pointer-events:none;filter:blur(70px);opacity:.5}
+.aurora i{position:absolute;border-radius:50%;animation:drift 18s ease-in-out infinite alternate}
+.aurora i:nth-child(1){width:44vw;height:44vw;max-width:600px;max-height:600px;right:0;top:4%;background:radial-gradient(circle,var(--m-build),transparent 65%)}
+.aurora i:nth-child(2){width:36vw;height:36vw;max-width:500px;max-height:500px;right:24%;top:34%;background:radial-gradient(circle,var(--m-idea),transparent 65%);animation-delay:-8s}
+@keyframes drift{to{transform:translate(-6%,8%) scale(1.12)}}
+.hero h1{font-size:clamp(36px,6vw,76px);line-height:1.12;margin-top:18px}
+.hero h1 .l{display:block;animation:rise .9s cubic-bezier(.2,.7,.1,1) both}
+.hero h1 .l:nth-child(2){animation-delay:.12s}
+.grad{background:linear-gradient(100deg,var(--m-build),var(--m-idea) 55%,var(--m-media));-webkit-background-clip:text;background-clip:text;color:transparent}
+.hero .lead{font-size:clamp(16px,1.7vw,19px);color:var(--muted);margin-top:20px;max-width:34em}
+@keyframes rise{from{transform:translateY(24px);opacity:.001}to{transform:none;opacity:1}}
+.meta{display:flex;flex-wrap:wrap;gap:10px;margin-top:26px}
+.meta span{font-size:13px;padding:7px 14px;border-radius:999px;border:1px solid var(--line);background:var(--surface)}
+.meta b{color:var(--accent);font-weight:700}
+.hero-art{position:relative;aspect-ratio:1;max-width:100%}
+.hero-art::before{content:"";position:absolute;inset:-2px;border-radius:calc(var(--r-lg) + 2px);background:conic-gradient(from var(--ang,0deg),var(--m-build),var(--m-idea),var(--m-media),var(--m-write),var(--m-build));animation:spin 8s linear infinite}
+.hero-art::after{content:"";position:absolute;inset:-30px;border-radius:60px;z-index:-1;background:conic-gradient(from var(--ang,0deg),var(--m-build),var(--m-idea),var(--m-media),var(--m-write),var(--m-build));filter:blur(48px);opacity:.3;animation:spin 8s linear infinite}
+@property --ang{syntax:"<angle>";inherits:false;initial-value:0deg}
+@keyframes spin{to{--ang:360deg}}
+.hero-art img{position:absolute;inset:2px;width:calc(100% - 4px);height:calc(100% - 4px);object-fit:cover;border-radius:calc(var(--r-lg) - 1px)}
+.hero-art .say{position:absolute;left:-14px;bottom:18px;max-width:72%;background:rgba(16,18,23,.86);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);border:1px solid var(--line);border-radius:18px 18px 18px 4px;padding:12px 16px;font-size:14px;line-height:1.6;box-shadow:var(--shadow);animation:rise .8s .5s cubic-bezier(.2,.7,.1,1) both}
+@media (max-width:860px){.hero .wrap{grid-template-columns:1fr}.hero-art{max-width:400px;width:100%;margin-inline:auto}.hero-art .say{left:10px}}
+
+/* layout with toc */
+.body{display:grid;grid-template-columns:220px minmax(0,1fr);gap:clamp(24px,5vw,72px);padding-block:clamp(32px,6vw,80px) 120px}
+.toc{position:sticky;top:calc(env(safe-area-inset-top,0px) + 84px);align-self:start;display:flex;flex-direction:column;gap:2px;font-size:13.5px}
+.toc a{display:flex;gap:10px;align-items:baseline;text-decoration:none;color:var(--muted);padding:7px 10px;border-radius:10px;transition:background .2s,color .2s}
+.toc a span{font-family:var(--f-mono);font-size:11.5px;min-width:2.2em}
+.toc a:hover{color:var(--ink)}
+.toc a.on{color:var(--ink);background:var(--surface)}
+.toc a.on span{color:var(--accent)}
+@media (max-width:980px){
+  .body{grid-template-columns:minmax(0,1fr)}
+  .toc{display:none}
+  .rail{display:flex;gap:8px;overflow-x:auto;scroll-snap-type:x proximity;padding:10px max(20px,env(safe-area-inset-left,0px)) 12px;border-top:1px solid var(--line);scrollbar-width:none}
+  .rail::-webkit-scrollbar{display:none}
+  .rail a{flex:0 0 auto;scroll-snap-align:start;font-size:12.5px;text-decoration:none;color:var(--muted);padding:6px 12px;border-radius:999px;border:1px solid var(--line);white-space:nowrap}
+  .rail a.on{color:#04120F;background:var(--accent);border-color:var(--accent)}
+}
+
+/* chapters */
+.chapter{padding-block:28px 64px;border-bottom:1px solid var(--line);scroll-margin-top:calc(env(safe-area-inset-top,0px) + 120px)}
+.chapter:last-of-type{border-bottom:0}
+.num{font-family:var(--f-display);font-weight:800;font-size:clamp(56px,8vw,96px);line-height:1;background:linear-gradient(180deg,var(--ink),rgba(242,243,245,.08));-webkit-background-clip:text;background-clip:text;color:transparent}
+.chapter h2{font-size:clamp(26px,3.6vw,40px);line-height:1.3;margin-top:6px}
+.chapter > p{color:var(--muted);margin-top:14px;max-width:42em}
+.why{margin-top:18px;display:grid;gap:8px;max-width:42em}
+.why li{color:var(--muted)}
+.why b{color:var(--ink)}
+ul.why{padding-left:1.2em;margin-bottom:0}
+
+/* character speech */
+.talk{display:flex;gap:14px;align-items:flex-end;margin-top:28px;max-width:46em}
+.talk img{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:0 0 auto;border:2px solid var(--c,var(--accent));box-shadow:0 0 0 4px rgba(255,255,255,.03)}
+.bubble{position:relative;background:var(--surface-2);border:1px solid var(--line);border-radius:20px 20px 20px 6px;padding:14px 18px;font-size:15px;line-height:1.75;min-width:0}
+.bubble .who{display:block;font-family:var(--f-mono);font-size:11.5px;color:var(--c,var(--accent));letter-spacing:.06em;margin-bottom:4px}
+.talk.pop .bubble{animation:pop .55s cubic-bezier(.2,.9,.2,1.2) both}
+@keyframes pop{from{transform:translateY(10px) scale(.96)}to{transform:none}}
+
+/* prompt + code */
+.block{margin-top:24px;border:1px solid var(--line);border-radius:var(--r-md);overflow:hidden;background:var(--code-bg);max-width:52em}
+.block-head{display:flex;justify-content:space-between;align-items:center;gap:12px;padding:10px 14px;border-bottom:1px solid var(--line);background:var(--surface)}
+.block-head span{font-family:var(--f-mono);font-size:12px;color:var(--muted);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.copy{all:unset;cursor:pointer;font-size:12.5px;font-weight:700;padding:6px 12px;border-radius:999px;border:1px solid var(--line);color:var(--ink);white-space:nowrap}
+.copy:hover{border-color:var(--accent);color:var(--accent)}
+.copy:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.block pre{margin:0;padding:16px 18px;overflow-x:auto;font-family:var(--f-mono);font-size:13px;line-height:1.75;white-space:pre;color:#DDE2E8}
+.block pre.prompt{white-space:pre-wrap;font-family:var(--f-jp);font-size:14.5px;color:var(--ink)}
+.block pre.prompt::before{content:"› ";color:var(--accent);font-family:var(--f-mono)}
+.k{color:var(--m-idea)}.s{color:var(--m-build)}.cm{color:#6F7785}
+.caret{display:inline-block;width:.55em;height:1.1em;background:var(--accent);vertical-align:-.15em;margin-left:2px;animation:blink 1s steps(1) infinite}
+@keyframes blink{50%{opacity:0}}
+
+/* glossary */
+.gloss{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:28px}
+.term{background:var(--surface);border:1px solid var(--line);border-radius:var(--r-md);padding:20px;min-width:0;transition:border-color .3s,transform .4s cubic-bezier(.2,.7,.1,1)}
+.term:hover{border-color:color-mix(in srgb,var(--accent) 45%,var(--line));transform:translateY(-3px)}
+.term h3{font-size:17px;display:flex;gap:10px;align-items:baseline;flex-wrap:wrap}
+.term h3 small{font-family:var(--f-mono);font-size:11.5px;font-weight:400;color:var(--accent)}
+.term p{font-size:14px;color:var(--muted);margin-top:8px;line-height:1.7}
+.term .eg{display:block;margin-top:10px;font-size:13px;color:var(--ink)}
+@media (max-width:900px){.gloss{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media (max-width:520px){.gloss{grid-template-columns:1fr}}
+
+/* sort board (step 1) */
+.sort{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;margin-top:24px;max-width:52em}
+.bin{border:1px dashed var(--line);border-radius:var(--r-md);padding:16px;min-width:0}
+.bin h3{font-size:14.5px}
+.bin h3 i{font-style:normal;font-family:var(--f-mono);font-size:11.5px;color:var(--c);display:block;letter-spacing:.06em}
+.bin ul{list-style:none;padding:0;margin:10px 0 0;display:grid;gap:6px}
+.bin li{font-size:13px;padding:7px 10px;border-radius:9px;background:var(--surface-2);border-left:3px solid var(--c)}
+@media (max-width:640px){.sort{grid-template-columns:1fr}}
+
+/* org chart (step 2) */
+.orgchart{margin-top:28px;max-width:52em;position:relative}
+.ceo{margin:0 auto;width:min(320px,100%);text-align:center;padding:16px 18px;border-radius:var(--r-md);background:linear-gradient(160deg,rgba(65,226,200,.18),rgba(143,124,255,.12));border:1.5px solid var(--accent)}
+.ceo b{display:block;font-size:17px}
+.ceo span{font-size:13px;color:var(--muted)}
+.wire{height:28px;width:2px;margin:0 auto;background:var(--accent)}
+.depts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px;position:relative;padding-top:24px}
+.depts::before{content:"";position:absolute;top:0;left:16.6%;right:16.6%;height:2px;background:var(--accent);transform-origin:center}
+.dept{position:relative;border:1px solid var(--line);border-radius:var(--r-md);padding:14px;background:var(--surface);min-width:0}
+.dept::before{content:"";position:absolute;top:-24px;left:50%;width:2px;height:24px;background:var(--accent)}
+.dept b{display:block;font-size:15px}
+.dept ul{list-style:none;padding:0;margin:8px 0 0;display:grid;gap:5px}
+.dept li{font-size:12.5px;font-family:var(--f-mono);color:var(--muted)}
+.guard{margin-top:16px;border:1.5px dashed var(--m-media);border-radius:var(--r-md);padding:14px 16px;display:flex;gap:12px;align-items:center;flex-wrap:wrap}
+.guard b{font-size:15px}
+.guard span{font-size:13px;color:var(--muted);flex:1;min-width:200px}
+.orgchart.draw .wire,.orgchart.draw .dept::before{animation:down .5s ease both}
+.orgchart.draw .depts::before{animation:wide .6s .3s ease both}
+.orgchart.draw .dept{animation:rise .6s cubic-bezier(.2,.7,.1,1) both;animation-delay:calc(.5s + var(--i) * .12s)}
+.orgchart.draw .guard{animation:rise .6s 1s cubic-bezier(.2,.7,.1,1) both}
+@keyframes down{from{transform:scaleY(0);transform-origin:top}to{transform:none}}
+@keyframes wide{from{transform:scaleX(0)}to{transform:none}}
+@media (max-width:640px){.depts{grid-template-columns:1fr;padding-top:0;gap:0}.depts::before{display:none}.dept{margin-top:24px}}
+
+/* flow (step 5) */
+.relay{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px;margin-top:26px;max-width:52em;counter-reset:r}
+.relay div{position:relative;border:1px solid var(--line);border-radius:14px;padding:14px 12px;background:var(--surface);font-size:13.5px;line-height:1.55;counter-increment:r;min-width:0}
+.relay div::before{content:counter(r);display:grid;place-items:center;width:26px;height:26px;border-radius:50%;background:var(--surface-2);border:1px solid var(--line);font-family:var(--f-mono);font-size:12px;margin-bottom:8px;animation:lit 5s infinite;animation-delay:calc(var(--i) * .6s)}
+@keyframes lit{0%,100%{border-color:var(--line);color:var(--ink)}6%{border-color:var(--accent);color:var(--accent);box-shadow:0 0 18px rgba(65,226,200,.45)}18%{border-color:var(--line);box-shadow:none}}
+.relay div.back{border-color:rgba(240,122,216,.5)}
+@media (max-width:760px){.relay{grid-template-columns:1fr}}
+
+/* callout */
+.note{margin-top:22px;display:flex;gap:12px;padding:14px 16px;border-radius:14px;background:var(--accent-soft);border:1px solid rgba(65,226,200,.3);max-width:52em;font-size:14.5px}
+.note b{color:var(--accent);white-space:nowrap}
+.note.warn{background:rgba(240,122,216,.08);border-color:rgba(240,122,216,.35)}
+.note.warn b{color:var(--m-media)}
+
+/* two-up (register) */
+.two{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-top:24px;max-width:52em}
+.two > div{border:1px solid var(--line);border-radius:var(--r-md);padding:18px;background:var(--surface);min-width:0}
+.two h3{font-size:16px}
+.two ol{margin:10px 0 0;padding-left:1.3em;font-size:14px;color:var(--muted);display:grid;gap:4px}
+.two code,.inline{font-family:var(--f-mono);font-size:12.5px;color:var(--ink);background:var(--bg);padding:1px 6px;border-radius:6px;border:1px solid var(--line);overflow-wrap:anywhere}
+@media (max-width:640px){.two{grid-template-columns:1fr}}
+
+/* faq */
+.faq{display:grid;gap:10px;margin-top:24px;max-width:52em}
+.faq details{border:1px solid var(--line);border-radius:var(--r-md);background:var(--surface);overflow:hidden}
+.faq summary{cursor:pointer;list-style:none;padding:16px 18px;font-weight:700;display:flex;justify-content:space-between;gap:12px}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";font-family:var(--f-mono);color:var(--accent);transition:transform .3s}
+.faq details[open] summary::after{transform:rotate(45deg)}
+.faq details p{padding:0 18px 16px;color:var(--muted);font-size:14.5px}
+
+/* checklist */
+.check{display:grid;gap:8px;margin-top:24px;max-width:52em}
+.check label{display:flex;gap:12px;align-items:flex-start;padding:14px 16px;border:1px solid var(--line);border-radius:14px;background:var(--surface);cursor:pointer;transition:border-color .3s,background .3s}
+.check input{appearance:none;-webkit-appearance:none;flex:0 0 22px;width:22px;height:22px;border-radius:7px;border:1.5px solid var(--muted);margin:3px 0 0;display:grid;place-items:center;transition:background .2s,border-color .2s}
+.check input::after{content:"";width:6px;height:11px;border:solid #04120F;border-width:0 2.5px 2.5px 0;transform:rotate(45deg) scale(0);margin-top:-2px;transition:transform .2s}
+.check input:checked{background:var(--accent);border-color:var(--accent)}
+.check input:checked::after{transform:rotate(45deg) scale(1)}
+.check input:focus-visible{outline:2.5px solid var(--accent);outline-offset:2px}
+.check label:has(input:checked){border-color:rgba(65,226,200,.45);background:rgba(65,226,200,.05)}
+.meter{display:flex;align-items:center;gap:14px;margin-top:18px;max-width:52em}
+.meter .bar{flex:1;height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden}
+.meter .bar i{display:block;height:100%;width:var(--w,0%);background:linear-gradient(90deg,var(--m-build),var(--m-idea));transition:width .5s cubic-bezier(.2,.7,.1,1)}
+.meter span{font-family:var(--f-mono);font-size:13px;color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+
+.end{margin-top:56px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;padding:24px;border:1px solid var(--line);border-radius:var(--r-lg);background:radial-gradient(ellipse at 0% 0%,rgba(65,226,200,.14),transparent 60%),var(--surface)}
+.end img{width:88px;height:88px;border-radius:50%;object-fit:cover;border:2px solid var(--m-write)}
+.end p{flex:1;min-width:220px;font-size:clamp(18px,2.2vw,22px);font-weight:900;line-height:1.5}
+.btn{display:inline-flex;align-items:center;gap:8px;padding:13px 22px;border-radius:999px;background:var(--accent);color:#04120F;text-decoration:none;font-weight:700;font-size:15px;transition:transform .3s,box-shadow .3s}
+.btn:hover{transform:translateY(-2px);box-shadow:0 0 0 6px var(--accent-soft),0 10px 40px -8px rgba(65,226,200,.6)}
+footer{padding-block:32px;color:var(--muted);font-size:13px;border-top:1px solid var(--line)}
+footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
+
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}html{scroll-behavior:auto}}
+</style>
+</head>
+<body>
+
+<nav class="nav" aria-label="ガイド">
+  <div class="wrap">
+    <a class="brand" href="index.html"><i aria-hidden="true"></i>Hayato × Claude</a>
+    <a class="back" href="index.html">← ポートフォリオへ</a>
+  </div>
+  <div class="rail" id="rail" aria-label="ステップ">
+    <a href="#s0">用語</a><a href="#s1">1 書き出す</a><a href="#s2">2 組織図</a><a href="#s3">3 スキル化</a><a href="#s4">4 登録</a><a href="#s5">5 司令塔</a><a href="#s6">6 エージェント</a><a href="#s7">7 守り</a><a href="#s8">8 育てる</a><a href="#faq">FAQ</a><a href="#done">チェック</a>
+  </div>
+  <span class="progress" id="progress" aria-hidden="true"></span>
+</nav>
+
+<header class="hero">
+  <div class="aurora" aria-hidden="true"><i></i><i></i></div>
+  <div class="wrap">
+    <div>
+      <span class="eyebrow">Beginner's guide</span>
+      <h1><span class="l">Claudeで、</span><span class="l"><span class="grad">自分のAI会社</span>をつくる。</span></h1>
+      <p class="lead">プログラミングの知識がなくても大丈夫です。自分の仕事を書き出すところから、組織図をつくり、スキルとエージェントで回すところまでを、8つのステップで案内します。</p>
+      <div class="meta"><span><b>8</b> ステップ</span><span>コピーして使える <b>指示文</b></span><span><b>SKILL.md</b> のひな形つき</span></div>
+    </div>
+    <div class="hero-art">
+      <img src="img/mode-write.webp" alt="ヘッドホンをつけてノートパソコンで作業するキャラクター" width="960" height="960">
+      <p class="say">ぼくが案内します。最初は1つのスキルからで十分ですよ。</p>
+    </div>
+  </div>
+</header>
+
+<div class="wrap body">
+  <nav class="toc" id="toc" aria-label="目次">
+    <a href="#s0"><span>00</span>用語を知る</a>
+    <a href="#s1"><span>01</span>仕事を書き出す</a>
+    <a href="#s2"><span>02</span>組織図を描く</a>
+    <a href="#s3"><span>03</span>役割をスキルにする</a>
+    <a href="#s4"><span>04</span>登録して試す</a>
+    <a href="#s5"><span>05</span>司令塔でつなぐ</a>
+    <a href="#s6"><span>06</span>エージェントを置く</a>
+    <a href="#s7"><span>07</span>守りを入れる</a>
+    <a href="#s8"><span>08</span>回して育てる</a>
+    <a href="#faq"><span>Q&amp;A</span>つまずきやすい点</a>
+    <a href="#done"><span>✓</span>チェックリスト</a>
+  </nav>
+
+  <main style="min-width:0">
+    <section class="chapter" id="s0">
+      <div class="num">00</div>
+      <h2>まず、6つの言葉だけ覚える。</h2>
+      <p>会社にたとえると、全部がすっきりつながります。</p>
+      <div class="gloss">
+        <div class="term"><h3>スキル <small>= 業務マニュアル</small></h3><p>1つの仕事のやり方を書いたフォルダです。中心は <span class="inline">SKILL.md</span> というファイルで、Claudeは頼まれた内容に合うスキルを自分で選んで読みます。</p><span class="eg">例：記事を書く手順、報告書の型</span></div>
+        <div class="term"><h3>司令塔 <small>= 部長</small></h3><p>依頼を分解して、どのスキルに任せるかを決める役のスキルです。これを置くと「作って」の一言で全体が動きます。</p><span class="eg">例：依頼を受けて担当に振り分ける</span></div>
+        <div class="term"><h3>エージェント <small>= 別室の担当者</small></h3><p>Claude Codeでは、別の文脈で動く専門の担当（サブエージェント）を作れます。作った人と違う目でチェックさせたいときに向いています。</p><span class="eg">例：成果物だけを見る検証役</span></div>
+        <div class="term"><h3>コネクタ <small>= 外線電話</small></h3><p>Gmail、カレンダー、Notionなど、ふだん使うアプリとClaudeをつなぐ口です。つなぐと、アプリの中の情報を読んだり書いたりできます。</p><span class="eg">例：予定を見てタスクを整理する</span></div>
+        <div class="term"><h3>プラグイン <small>= 部署ごとの引っ越しセット</small></h3><p>スキル、エージェント、設定などをひとまとめにしたものです。他の人に部署ごと渡したり、他の人の部署を借りたりできます。</p><span class="eg">例：出版チーム一式</span></div>
+        <div class="term"><h3>個人の設定 <small>= 社訓</small></h3><p>どの会話でも守ってほしいルールを書いておく場所です。安全のルールや、文章の好みを入れておきます。</p><span class="eg">例：開発時は毎回セキュリティ確認</span></div>
+      </div>
+      <div class="talk" style="--c:var(--m-idea)"><img src="img/face-idea.webp" alt="" width="320" height="320"><div class="bubble"><span class="who">GUIDE · RESEARCH</span>言葉は全部覚えなくて大丈夫。「スキル＝マニュアル」「司令塔＝部長」の2つだけで、ステップ5まで進めます。</div></div>
+    </section>
+
+    <section class="chapter" id="s1">
+      <div class="num">01</div>
+      <h2>1週間の仕事を、ぜんぶ書き出す。</h2>
+      <p>AIに任せる仕事を決める前に、まず自分が何をしているかを見える形にします。思いついた順に、箇条書きで十分です。</p>
+      <div class="block"><div class="block-head"><span>Claudeに送る指示文</span><button class="copy" type="button" data-copy="p1">コピー</button></div><pre class="prompt typing" id="p1">私の1週間の仕事を書き出します。
+・（ここに思いつく仕事を全部書く）
+
+これを「毎週くり返す」「時間がかかる」「ミスが怖い」の3つに分けて、AIに任せやすい順に並べてください。任せないほうがいい仕事があれば、理由も教えてください。</pre></div>
+      <div class="sort" aria-label="仕事の仕分けの例">
+        <div class="bin" style="--c:var(--m-build)"><h3><i>REPEAT</i>毎週くり返す</h3><ul><li>お知らせ文の作成</li><li>週次の報告</li><li>予定の調整</li></ul></div>
+        <div class="bin" style="--c:var(--m-idea)"><h3><i>HEAVY</i>時間がかかる</h3><ul><li>資料やスライド</li><li>記事の下書き</li><li>調べもの</li></ul></div>
+        <div class="bin" style="--c:var(--m-media)"><h3><i>RISKY</i>ミスが怖い</h3><ul><li>お金や契約の確認</li><li>公開前のチェック</li><li>個人情報の扱い</li></ul></div>
+      </div>
+      <div class="talk" style="--c:var(--m-build)"><img src="img/face-build.webp" alt="" width="320" height="320"><div class="bubble"><span class="who">GUIDE · BUILD</span>「ミスが怖い」仕事は、AIに全部任せるより「チェック役」をAIにするのがコツです。ステップ6で使います。</div></div>
+    </section>
+
+    <section class="chapter" id="s2">
+      <div class="num">02</div>
+      <h2>仕事を、会社の組織図にする。</h2>
+      <p>書き出した仕事を「部署」と「担当者」に分けます。ポイントは、上に司令塔を1人置くことと、作る人とチェックする人を分けることです。</p>
+      <div class="block"><div class="block-head"><span>Claudeに送る指示文</span><button class="copy" type="button" data-copy="p2">コピー</button></div><pre class="prompt" id="p2">さっきの仕事一覧をもとに、私のAIチームの組織図を作ってください。
+・いちばん上に司令塔を1人置く
+・部署と担当者を決め、それぞれ「役割」「やること」「やらないこと」を書く
+・作る担当とチェックする担当は別にする
+・最初に作るべき担当を3つ選んで、理由も書く</pre></div>
+      <div class="orgchart" id="orgchart" aria-label="組織図の例">
+        <div class="ceo"><b>司令塔</b><span>依頼を分けて、担当に振り分ける</span></div>
+        <div class="wire"></div>
+        <div class="depts">
+          <div class="dept" style="--i:0"><b>発信部</b><ul><li>記事担当</li><li>SNS担当</li><li>動画担当</li></ul></div>
+          <div class="dept" style="--i:1"><b>事務部</b><ul><li>連絡文担当</li><li>予定担当</li><li>報告書担当</li></ul></div>
+          <div class="dept" style="--i:2"><b>開発部</b><ul><li>設計担当</li><li>実装担当</li><li>テスト担当</li></ul></div>
+        </div>
+        <div class="guard"><b>品質・守り（全部署を見る）</b><span>検証役とセキュリティ役。作った人とは別に、成果物だけを見て合否を出す。</span></div>
+      </div>
+      <div class="talk" style="--c:var(--m-media)"><img src="img/face-media.webp" alt="" width="320" height="320"><div class="bubble"><span class="who">GUIDE · MEDIA</span>最初から全部署を作らなくていいんです。いちばん困っている仕事の担当を、まず1人だけ雇いましょう。</div></div>
+    </section>
+
+    <section class="chapter" id="s3">
+      <div class="num">03</div>
+      <h2>担当者1人を、スキル1つにする。</h2>
+      <p>組織図の担当者を、マニュアル（SKILL.md）に書き起こします。いちばん大事なのは先頭の <span class="inline">description</span> です。Claudeはここを読んで、そのスキルを使うかどうかを決めます。</p>
+      <div class="block"><div class="block-head"><span>Claudeに送る指示文</span><button class="copy" type="button" data-copy="p3">コピー</button></div><pre class="prompt" id="p3">組織図の「記事担当」をスキルにしたいです。SKILL.mdの形で、name・description・役割・手順・出力・やらないことを書いてください。descriptionには「どんな言葉で頼まれたら使うか」も入れてください。</pre></div>
+      <div class="block"><div class="block-head"><span>blog-writer/SKILL.md（ひな形）</span><button class="copy" type="button" data-copy="c3">コピー</button></div><pre id="c3"><span class="cm">---</span>
+<span class="k">name:</span> <span class="s">blog-writer</span>
+<span class="k">description:</span> <span class="s">ブログやnoteの記事を書くときに使う。「記事にして」「noteにまとめて」と頼まれたら必ずこのスキルを使う。</span>
+<span class="cm">---</span>
+
+# 役割
+あなたは私の記事担当です。
+
+# 手順
+1. 読者と、伝えたいことを1文で確かめる
+2. 見出しを3〜5個で組み立てる
+3. 私の文体（です・ます、短い文、前向きに締める）で書く
+
+# 出力
+- タイトル案を3つ
+- 本文（見出しつき）
+
+# やらないこと
+- 確かめていない数字を書かない
+- 聞き取れない部分を推測で埋めない</pre></div>
+      <ul class="why">
+        <li><b>name</b> は英小文字とハイフンで短く。フォルダ名と同じにします。</li>
+        <li><b>description</b> には「何をするか」と「いつ使うか」を両方書きます。</li>
+        <li><b>やらないこと</b> を書くと、出力のブレが一気に減ります。</li>
+      </ul>
+    </section>
+
+    <section class="chapter" id="s4">
+      <div class="num">04</div>
+      <h2>登録して、実際に頼んでみる。</h2>
+      <p>スキルは置き場所に入れるだけで使えるようになります。使っている環境に合わせて選んでください。</p>
+      <div class="two">
+        <div><h3>Claudeアプリで使う</h3><ol><li><span class="inline">blog-writer</span> フォルダに SKILL.md を入れる</li><li>フォルダごとzipにする</li><li>設定のスキル欄からアップロードする</li></ol></div>
+        <div><h3>Claude Codeで使う</h3><ol><li>全プロジェクトで使うなら <code>~/.claude/skills/blog-writer/SKILL.md</code></li><li>このプロジェクトだけなら <code>.claude/skills/blog-writer/SKILL.md</code></li><li><code>/blog-writer</code> と打てば直接呼べる</li></ol></div>
+      </div>
+      <div class="block"><div class="block-head"><span>試しに送る文</span><button class="copy" type="button" data-copy="p4">コピー</button></div><pre class="prompt" id="p4">今日の仕事で気づいたことをnoteにまとめて。（ここにメモを貼る）</pre></div>
+      <div class="note"><b>うまく呼ばれない？</b><span>description に、実際に自分が使う言い方（「まとめて」「記事にして」など）を足すと、選ばれやすくなります。</span></div>
+      <div class="talk" style="--c:var(--m-write)"><img src="img/face-write.webp" alt="" width="320" height="320"><div class="bubble"><span class="who">GUIDE · WRITE</span>出力を見て「ここが違う」と思ったら、その言葉をそのまま「やらないこと」に足してください。マニュアルが育っていきます。</div></div>
+    </section>
+
+    <section class="chapter" id="s5">
+      <div class="num">05</div>
+      <h2>司令塔スキルで、担当をつなぐ。</h2>
+      <p>担当のスキルが2〜3個できたら、司令塔を置きます。依頼を受けたら分解し、担当に渡し、チェック役を通してから報告する。この流れを書くだけです。</p>
+      <div class="relay" aria-label="司令塔の流れ">
+        <div style="--i:0">依頼をゴール・期限・成果物に分ける</div>
+        <div style="--i:1">作業ごとに担当スキルを決める</div>
+        <div style="--i:2">担当が作る</div>
+        <div style="--i:3">作っていない検証役が確かめる</div>
+        <div class="back" style="--i:4">合格だけをまとめて報告。不合格は担当に戻す</div>
+      </div>
+      <div class="block"><div class="block-head"><span>my-orchestrator/SKILL.md（ひな形）</span><button class="copy" type="button" data-copy="c5">コピー</button></div><pre id="c5"><span class="cm">---</span>
+<span class="k">name:</span> <span class="s">my-orchestrator</span>
+<span class="k">description:</span> <span class="s">「作って」「まとめて進めて」など、いくつもの作業が必要な依頼を受けたときに最初に使う司令塔。</span>
+<span class="cm">---</span>
+
+# 進め方
+1. 依頼をゴール・締め切り・成果物に分ける
+2. 作業ごとに担当スキルを決める
+   - 記事 → blog-writer
+   - 連絡文 → message-writer
+   - 調べもの → researcher
+3. 担当の成果物を、作っていない検証役（reviewer）に渡す
+4. 不合格なら理由をつけて担当に戻す
+5. 合格したものだけをまとめて報告する
+
+# 報告の形
+- できたもの / 確認してほしい点 / 次の一手</pre></div>
+    </section>
+
+    <section class="chapter" id="s6">
+      <div class="num">06</div>
+      <h2>エージェントで、別の目を入れる。</h2>
+      <p>Claude Codeでは、別の文脈で動く担当（サブエージェント）を作れます。作った過程を知らない担当に成果物だけを見せると、自分で自分を採点する状態を避けられます。</p>
+      <div class="block"><div class="block-head"><span>.claude/agents/reviewer.md（ひな形）</span><button class="copy" type="button" data-copy="c6">コピー</button></div><pre id="c6"><span class="cm">---</span>
+<span class="k">name:</span> <span class="s">reviewer</span>
+<span class="k">description:</span> <span class="s">成果物ができたら必ず使う検証役。作った過程は見ずに、成果物だけを見て合否を出す。</span>
+<span class="k">tools:</span> <span class="s">Read, Grep, Glob</span>
+<span class="cm">---</span>
+
+あなたは検証担当です。渡された成果物だけを読み、
+1. 依頼の条件を満たしているか
+2. 事実や数字に根拠があるか
+3. 個人情報や秘密の情報が入っていないか
+を確かめ、「合格」か「差し戻し（理由つき）」で答えてください。</pre></div>
+      <ul class="why">
+        <li><b>置き場所：</b> このプロジェクトだけなら <span class="inline">.claude/agents/</span>、全プロジェクトなら <span class="inline">~/.claude/agents/</span> です。</li>
+        <li><b>tools：</b> 読むだけの道具に絞ると、検証役が勝手にファイルを書き換えません。</li>
+        <li><b>本文：</b> その担当への指示になります。役割と、答え方の形を書きます。</li>
+      </ul>
+      <div class="talk" style="--c:var(--m-build)"><img src="img/face-build.webp" alt="" width="320" height="320"><div class="bubble"><span class="who">GUIDE · BUILD</span>Claudeアプリだけで使う場合は、検証役を「スキル」として作り、司令塔から呼ぶ形でも同じ考え方を取り入れられます。</div></div>
+    </section>
+
+    <section class="chapter" id="s7">
+      <div class="num">07</div>
+      <h2>守りのルールを、最初から入れておく。</h2>
+      <p>AIの組織が動き出すほど、事故が起きたときの影響も大きくなります。社訓（個人の設定）に安全のルールを書いておけば、どの会話でも守られます。</p>
+      <div class="block"><div class="block-head"><span>個人の設定に書く文</span><button class="copy" type="button" data-copy="p7">コピー</button></div><pre class="prompt" id="p7">システム開発やコードを作るときは毎回、OWASP Top 10、認証と認可、入力のチェック、パスワードやAPIキーなど秘密情報の扱いを確認してから進めてください。</pre></div>
+      <div class="note warn"><b>やってはいけない</b><span>APIキーやパスワードをSKILL.mdや会話に書かないこと。外から取り込むスキルは、中身を読んで危ないコマンドがないか確かめてから入れること。</span></div>
+    </section>
+
+    <section class="chapter" id="s8">
+      <div class="num">08</div>
+      <h2>使うたびに、組織を育てる。</h2>
+      <p>スキルは一度作って終わりではありません。仕事が終わるたびに振り返り、マニュアルに戻していくと、どんどん自分の会社らしくなります。</p>
+      <div class="block"><div class="block-head"><span>仕事の終わりに送る文</span><button class="copy" type="button" data-copy="p8">コピー</button></div><pre class="prompt" id="p8">今回の作業をふり返って、使ったスキルに足すべきこと・消すべきことを教えてください。直した版のSKILL.mdも出してください。</pre></div>
+      <ul class="why">
+        <li><b>効果を記録する：</b> 「何分かかっていた仕事が何分になったか」をメモしておくと、次にどこを任せるかが決めやすくなります。</li>
+        <li><b>入口は1つに：</b> スキルが増えてきたら、「作って」で動く司令塔を1つに決めて、他はそこから呼ぶ形にまとめます。</li>
+        <li><b>似たスキルはまとめる：</b> 説明が近いスキルが2つあると、どちらが動くかがぶれます。</li>
+      </ul>
+    </section>
+
+    <section class="chapter" id="faq">
+      <div class="num">Q&amp;A</div>
+      <h2>つまずきやすいところ。</h2>
+      <div class="faq">
+        <details><summary>スキルを作ったのに使われません</summary><p>description が短すぎることが多いです。「何をするスキルか」に加えて、「記事にして」「まとめて」のような自分の頼み方を入れてみてください。Claude Codeなら <span class="inline">/スキル名</span> で直接呼ぶこともできます。</p></details>
+        <details><summary>毎回、出力の形がばらばらです</summary><p>SKILL.md に「出力」の項目を作り、見出しや順番を決めて書いてください。良かった出力をそのまま例として貼っておくのも効果的です。</p></details>
+        <details><summary>スキルはいくつ作ればいいですか</summary><p>最初は3つで十分です。おすすめは、自分の文体のスキル、いちばん困っている仕事のスキル、検証役のスキルです。数より、毎週使うことのほうが大切です。</p></details>
+        <details><summary>プログラミングができなくても作れますか</summary><p>作れます。SKILL.md はふつうの文章で書けますし、このページの指示文のようにClaudeに書いてもらうこともできます。エージェント（ステップ6）だけはClaude Codeが必要です。</p></details>
+        <details><summary>人のスキルを使ってもいいですか</summary><p>公開されているものは使えますが、ライセンスと中身を必ず確かめてください。知らない外部サイトにデータを送る処理や、ファイルを消すコマンドが入っていないかを見ます。</p></details>
+      </div>
+    </section>
+
+    <section class="chapter" id="done">
+      <div class="num">✓</div>
+      <h2>できたところに、チェック。</h2>
+      <p>チェックはこの端末のブラウザにだけ保存されます。</p>
+      <div class="meter"><span class="bar"><i id="meterBar"></i></span><span id="meterText">0 / 8</span></div>
+      <div class="check" id="check">
+        <label><input type="checkbox" id="c-1">1週間の仕事を書き出して、3つに仕分けた</label>
+        <label><input type="checkbox" id="c-2">司令塔・部署・検証役のある組織図ができた</label>
+        <label><input type="checkbox" id="c-3">最初の担当を1つ、SKILL.mdにした</label>
+        <label><input type="checkbox" id="c-4">スキルを登録して、実際に呼ばれるのを確かめた</label>
+        <label><input type="checkbox" id="c-5">司令塔スキルで2つ以上の担当をつないだ</label>
+        <label><input type="checkbox" id="c-6">作った人とは別の検証役を置いた</label>
+        <label><input type="checkbox" id="c-7">個人の設定に安全のルールを書いた</label>
+        <label><input type="checkbox" id="c-8">作業の後に振り返って、スキルを1回直した</label>
+      </div>
+      <div class="end">
+        <img src="img/face-write.webp" alt="" width="320" height="320">
+        <p>ここまでできたら、あなたも<br>AIのチームを率いる側です。</p>
+        <a class="btn" href="index.html#atlas">実際のスキル図鑑を見る →</a>
+      </div>
+    </section>
+  </main>
+</div>
+
+<footer><div class="wrap"><span>© 2026 片山 颯斗</span><a class="back" href="index.html">ポートフォリオに戻る</a></div></footer>
+
+<script>
+(() => {
+  const reduce = matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  // Reading progress bar
+  const bar = document.getElementById('progress');
+  const onScroll = () => {
+    const h = document.documentElement.scrollHeight - innerHeight;
+    bar.style.setProperty('--p', h > 0 ? Math.min(1, scrollY / h).toFixed(4) : 0);
+  };
+  addEventListener('scroll', onScroll, { passive: true }); onScroll();
+
+  // Highlight the current chapter in the side TOC and the phone rail
+  const links = [...document.querySelectorAll('#toc a, #rail a')];
+  const rail = document.getElementById('rail');
+  const chapters = [...document.querySelectorAll('.chapter')];
+  if ('IntersectionObserver' in window) {
+    const io = new IntersectionObserver(es => {
+      es.forEach(e => {
+        if (!e.isIntersecting) return;
+        const id = '#' + e.target.id;
+        links.forEach(a => a.classList.toggle('on', a.getAttribute('href') === id));
+        const r = rail.querySelector('a.on');
+        if (r && getComputedStyle(rail).display !== 'none') {
+          rail.scrollTo({ left: r.offsetLeft - 20, behavior: reduce ? 'auto' : 'smooth' });
+        }
+      });
+    }, { rootMargin: '-40% 0px -55% 0px' });
+    chapters.forEach(c => io.observe(c));
+
+    if (!reduce) {
+      // One-shot motion: speech bubbles pop, org chart draws its wires
+      const once = new IntersectionObserver(es => {
+        es.forEach(e => {
+          if (!e.isIntersecting) return;
+          e.target.classList.add(e.target.dataset.fx);
+          once.unobserve(e.target);
+          if (e.target.dataset.fx === 'typed') typeOut(e.target);
+        });
+      }, { threshold: .35 });
+      document.querySelectorAll('.talk').forEach(t => { t.dataset.fx = 'pop'; once.observe(t); });
+      const org = document.getElementById('orgchart'); org.dataset.fx = 'draw'; once.observe(org);
+      document.querySelectorAll('.typing').forEach(p => { p.dataset.fx = 'typed'; once.observe(p); });
+    }
+  }
+
+  // Typewriter replay for the first prompt (text is already complete in the markup)
+  function typeOut(el) {
+    const full = el.textContent;
+    const caret = document.createElement('span'); caret.className = 'caret';
+    let i = 0;
+    el.textContent = '';
+    const step = () => {
+      i = Math.min(full.length, i + 3);
+      el.textContent = full.slice(0, i);
+      el.appendChild(caret);
+      if (i < full.length) setTimeout(step, 18); else setTimeout(() => caret.remove(), 1200);
+    };
+    step();
+  }
+
+  // Copy buttons: copy the matching block's plain text
+  document.querySelectorAll('.copy').forEach(btn => {
+    btn.addEventListener('click', () => {
+      const src = document.getElementById(btn.dataset.copy);
+      const text = src.dataset.full || src.textContent.replace(/​/g, '');
+      const done = msg => { btn.textContent = msg; setTimeout(() => { btn.textContent = 'コピー'; }, 1600); };
+      const fallback = () => {
+        const range = document.createRange(); range.selectNodeContents(src);
+        const sel = getSelection(); sel.removeAllRanges(); sel.addRange(range);
+        done('選択しました');
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(text).then(() => done('コピーしました'), fallback);
+      } else { fallback(); }
+    });
+  });
+  // Keep the typed prompt's full text available for copying mid-animation
+  document.querySelectorAll('.typing').forEach(p => { p.dataset.full = p.textContent; });
+
+  // Checklist saved per viewer (optional convenience)
+  const boxes = [...document.querySelectorAll('#check input')];
+  const meterBar = document.getElementById('meterBar'), meterText = document.getElementById('meterText');
+  const KEY = 'ai-company-guide-checks';
+  const render = () => {
+    const n = boxes.filter(b => b.checked).length;
+    meterBar.style.setProperty('--w', (n / boxes.length * 100) + '%');
+    meterText.textContent = n + ' / ' + boxes.length;
+  };
+  try {
+    const saved = JSON.parse(localStorage.getItem(KEY) || '[]');
+    if (Array.isArray(saved)) boxes.forEach(b => { b.checked = saved.includes(b.id); });
+  } catch (e) {}
+  boxes.forEach(b => b.addEventListener('change', () => {
+    render();
+    try { localStorage.setItem(KEY, JSON.stringify(boxes.filter(x => x.checked).map(x => x.id))); } catch (e) {}
+  }));
+  render();
+})();
+</script>
+</body>
+</html>
