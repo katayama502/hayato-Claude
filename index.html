@@ -307,6 +307,22 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   .detail{padding:22px}
 }
 
+/* learn hub */
+.learn{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:16px;margin-top:48px;counter-reset:l}
+.lcard{position:relative;display:flex;flex-direction:column;gap:12px;padding:28px;border-radius:var(--r-lg);border:1px solid var(--line);background:radial-gradient(ellipse at 100% 0%,color-mix(in srgb,var(--c) 16%,transparent),transparent 60%),var(--surface);text-decoration:none;color:var(--ink);min-width:0;overflow:hidden;transition:transform .5s cubic-bezier(.2,.7,.1,1),border-color .4s}
+.lcard:hover{transform:translateY(-6px);border-color:color-mix(in srgb,var(--c) 55%,var(--line))}
+.lcard .lnum{position:absolute;right:22px;top:14px;font-family:var(--f-display);font-weight:800;font-size:64px;line-height:1;color:transparent;-webkit-text-stroke:1px color-mix(in srgb,var(--c) 60%,transparent)}
+.lcard img{width:84px;height:84px;border-radius:50%;object-fit:cover;border:3px solid var(--c);box-shadow:0 0 0 6px color-mix(in srgb,var(--c) 14%,transparent);animation:bob 6s ease-in-out infinite}
+.lcard:nth-child(2) img{animation-delay:-2s}.lcard:nth-child(3) img{animation-delay:-4s}
+.lcard h3{font-size:clamp(22px,2.2vw,28px);margin-top:6px}
+.lcard p{color:var(--muted);font-size:14.5px;line-height:1.75}
+.ltags{display:flex;flex-wrap:wrap;gap:6px}
+.ltags i{font-style:normal;font-size:12px;padding:4px 10px;border-radius:999px;background:color-mix(in srgb,var(--c) 12%,transparent);color:var(--ink)}
+.lgo{margin-top:auto;padding-top:10px;font-weight:700;color:var(--c);font-size:15px}
+.lcard:hover .lgo{letter-spacing:.04em}
+.lgo{transition:letter-spacing .3s}
+@media (max-width:900px){.learn{grid-template-columns:1fr}.lcard{flex-direction:column}}
+
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none!important;transition:none!important}
   html{scroll-behavior:auto}
@@ -324,9 +340,9 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
       <li><a href="#org">AI組織</a></li>
       <li><a href="#atlas">スキル図鑑</a></li>
       <li><a href="#patterns">7つの型</a></li>
-      <li><a href="#cases">事例</a></li>
+      <li><a href="#cases">実績</a></li>
       <li><a href="#eval">評価</a></li>
-      <li class="keep"><a class="nav-cta" href="guide.html">はじめ方ガイド</a></li>
+      <li class="keep"><a class="nav-cta" href="#learn">学ぶ</a></li>
     </ul>
   </div>
 </nav>
@@ -468,7 +484,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
           <h3>品質・セキュリティ</h3>
           <p>OWASPに沿ったチェック、テスト設計、成果物を別の目で確かめる検証を担当します。</p>
           <div class="slugs"><code>secure-coding</code><code>security-pack</code><code>ai-security-audit</code><code>testing-best-practices</code><code>output-verifier</code><code>debugging-methodology</code></div>
-          <div class="term"><span class="p">›</span> PHPの重大な脆弱性、うちは大丈夫？<br><span class="c"># 最新情報を確認 → 読み取り専用の監査バッチ → 対応手順</span></div>
+          <div class="term"><span class="p">›</span> このログイン機能、安全か見て<br><span class="c"># OWASPで点検 → 指摘と直し方 → 直した後に再確認</span></div>
         </div>
         <div class="pane" role="tabpanel" id="p-web" aria-labelledby="t-web" hidden>
           <h3>Web・アプリ構築</h3>
@@ -566,17 +582,17 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
 
 <section id="cases" style="padding-top:0">
   <div class="wrap">
-    <span class="eyebrow">Cases · 2026.10</span>
-    <h2 class="h2">この1か月で、やったこと。</h2>
-    <p class="lead">2026年10月の作業履歴から、成果を数字で言えるものを選びました。</p>
+    <span class="eyebrow">Works</span>
+    <h2 class="h2">これまで、やってきたこと。</h2>
+    <p class="lead">これまでの作業から、成果を数字で言えるものを選びました。</p>
     <p class="swipe cases-swipe" aria-hidden="true">← 横にスワイプ →</p>
     <div class="cases">
       <article class="case wide glow"><span class="area">System</span><b>116件</b><small>自動テスト（v3.1）</small><h3>公式LINEのお弁当予約注文システム</h3><p>OSSを調べて設計し、別の担当が審査してから実装。店主向けの「かんたん表示」まで改良しました。</p></article>
       <article class="case glow"><span class="area">Design doc</span><b>1本</b><small>Workerで複数の公式LINE</small><h3>複数の公式LINEを束ねる管理画面</h3><p>議事録から方向性・機能・セキュリティ方針までを構成図つきの設計書にまとめました。</p></article>
       <article class="case glow"><span class="area">Video</span><b>8.0→2.3秒</b><small>画面が止まる最長区間</small><h3>40秒のInstagramリール</h3><p>分析スクリプトで作り直す前後を測り、刺激の間隔も2.0秒から1.54秒に縮めました。</p></article>
       <article class="case glow"><span class="area">Writing</span><b>3,500字</b><small>14分の録音から</small><h3>note記事とSpotifyの説明文</h3><p>自分の文体で記事化。聞き取れなかった箇所は推測で埋めず、確認ポイントとして返します。</p></article>
-      <article class="case glow"><span class="area">Security</span><b>翌日</b><small>修正版の公開から対応まで</small><h3>PHPの重大な脆弱性への対応</h3><p>既定は読み取り専用の監査バッチを作り、初学者向けの解説記事も書きました。</p></article>
       <article class="case glow"><span class="area">Knowledge</span><b>4＋31</b><small>新規ノート＋追記</small><h3>Obsidianの開発ナレッジベース</h3><p>GitHubと公式の更新情報を調べて追記。確かめられない情報には印を付けています。</p></article>
+      <article class="case glow"><span class="area">Publishing</span><b>12役割</b><small>自作プラグイン</small><h3>Kindle出版チーム</h3><p>リサーチ・企画・執筆・校正・表紙・組版・KDP登録・広告・分析を、編集長スキルが品質ゲートでつなぎます。</p></article>
       <article class="case glow"><span class="area">Skill ops</span><b>8件</b><small>取り込んだリポジトリ</small><h3>動画・デザイン系スキルの取り込み</h3><p>危険なコマンドや鍵の混入、ライセンスを確かめてからスキルとして登録しました。</p></article>
     </div>
   </div>
@@ -590,7 +606,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
       <div>
         <div class="score"><b>4.5</b><span>/ 5<br>総合評価</span></div>
         <span class="level">上級〜エキスパート：AIを組織として運用できるレベル</span>
-        <p class="lead">8項目の平均は4.4です。スキル構成と10月の作業履歴をもとにした見立てで、他の利用者と比べた統計ではありません。</p>
+        <p class="lead">8項目の平均は4.4です。スキル構成とこれまでの作業履歴をもとにした見立てで、他の利用者と比べた統計ではありません。</p>
       </div>
       <div id="radarWrap"><svg class="radar" viewBox="0 0 480 420" role="img" aria-label="8項目の評価。仕組み化・セキュリティ・活用の幅が5、ツール連携と業務への定着が4.5、発信が4、成果の測定と保守のしやすさが3.5"><polygon class="r-ring" points="240.0,184.4 258.1,191.9 265.6,210.0 258.1,228.1 240.0,235.6 221.9,228.1 214.4,210.0 221.9,191.9"/><polygon class="r-ring" points="240.0,158.8 276.2,173.8 291.2,210.0 276.2,246.2 240.0,261.2 203.8,246.2 188.8,210.0 203.8,173.8"/><polygon class="r-ring" points="240.0,133.2 294.3,155.7 316.8,210.0 294.3,264.3 240.0,286.8 185.7,264.3 163.2,210.0 185.7,155.7"/><polygon class="r-ring" points="240.0,107.6 312.4,137.6 342.4,210.0 312.4,282.4 240.0,312.4 167.6,282.4 137.6,210.0 167.6,137.6"/><polygon class="r-ring" points="240.0,82.0 330.5,119.5 368.0,210.0 330.5,300.5 240.0,338.0 149.5,300.5 112.0,210.0 149.5,119.5"/><line class="r-spoke" x1="240" y1="210" x2="240.0" y2="82.0"/><line class="r-spoke" x1="240" y1="210" x2="330.5" y2="119.5"/><line class="r-spoke" x1="240" y1="210" x2="368.0" y2="210.0"/><line class="r-spoke" x1="240" y1="210" x2="330.5" y2="300.5"/><line class="r-spoke" x1="240" y1="210" x2="240.0" y2="338.0"/><line class="r-spoke" x1="240" y1="210" x2="149.5" y2="300.5"/><line class="r-spoke" x1="240" y1="210" x2="112.0" y2="210.0"/><line class="r-spoke" x1="240" y1="210" x2="149.5" y2="119.5"/><text class="r-tick" x="246.0" y="188.4">1</text><text class="r-tick" x="246.0" y="137.2">3</text><polygon class="r-area" points="240.0,82.0 330.5,119.5 368.0,210.0 321.5,291.5 240.0,325.2 167.6,282.4 150.4,210.0 176.6,146.6"/><circle class="r-dot" cx="240.0" cy="82.0" r="4"/><circle class="r-dot" cx="330.5" cy="119.5" r="4"/><circle class="r-dot" cx="368.0" cy="210.0" r="4"/><circle class="r-dot" cx="321.5" cy="291.5" r="4"/><circle class="r-dot" cx="240.0" cy="325.2" r="4"/><circle class="r-dot" cx="167.6" cy="282.4" r="4"/><circle class="r-dot" cx="150.4" cy="210.0" r="4"/><circle class="r-dot" cx="176.6" cy="146.6" r="4"/><text class="r-label" x="240.0" y="56.0" text-anchor="middle">仕組み化 <tspan class="r-val">5</tspan></text><text class="r-label" x="346.1" y="108.9" text-anchor="start">セキュリティ <tspan class="r-val">5</tspan></text><text class="r-label" x="390.0" y="215.0" text-anchor="start">活用の幅 <tspan class="r-val">5</tspan></text><text class="r-label" x="346.1" y="321.1" text-anchor="start">ツール連携 <tspan class="r-val">4.5</tspan></text><text class="r-label" x="240.0" y="374.0" text-anchor="middle">業務への定着 <tspan class="r-val">4.5</tspan></text><text class="r-label" x="133.9" y="321.1" text-anchor="end">発信 <tspan class="r-val">4</tspan></text><text class="r-label" x="90.0" y="215.0" text-anchor="end">成果の測定 <tspan class="r-val">3.5</tspan></text><text class="r-label" x="133.9" y="108.9" text-anchor="end">保守のしやすさ <tspan class="r-val">3.5</tspan></text></svg></div>
     </div>
@@ -602,22 +618,36 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
   </div>
 </section>
 
-<section id="guide-promo" style="padding-top:0">
+<section id="learn" style="padding-top:0">
   <div class="wrap">
-    <div class="promo">
-      <div>
-        <span class="eyebrow">For beginners</span>
-        <h2>はじめての人へ。<br>Claudeで、自分のAI会社をつくる。</h2>
-        <p class="lead">仕事の書き出しから、組織図、スキル、司令塔、エージェントまで。キャラクターと一緒に、コピーして使える指示文つきで解説しています。</p>
-        <ol>
-          <li style="--i:0">仕事を書き出す</li><li style="--i:1">組織図を描く</li><li style="--i:2">スキルにする</li><li style="--i:3">登録して試す</li><li style="--i:4">司令塔でつなぐ</li><li style="--i:5">エージェントを置く</li><li style="--i:6">守りを入れる</li><li style="--i:7">回して育てる</li>
-        </ol>
-        <a class="btn" href="guide.html">8ステップのガイドを開く →</a>
-      </div>
-      <div class="faces" aria-hidden="true">
-        <img src="img/face-build.webp" alt="" width="320" height="320"><img src="img/face-idea.webp" alt="" width="320" height="320"><img src="img/face-media.webp" alt="" width="320" height="320"><img src="img/face-write.webp" alt="" width="320" height="320">
-        <span>8<small>STEPS</small></span>
-      </div>
+    <span class="eyebrow">Learn</span>
+    <h2 class="h2">はじめての人へ。<br>3つのページで学べます。</h2>
+    <p class="lead">スキルの正体を知って、自分で1つ作って、チームとして回す。この順に読むと、明日から自分のAI会社を動かせます。</p>
+    <div class="learn">
+      <a class="lcard glow" href="skills.html" style="--c:var(--m-idea)">
+        <span class="lnum">01</span>
+        <img src="img/face-idea.webp" alt="" width="320" height="320">
+        <h3>スキルとは？</h3>
+        <p>AIに渡すマニュアルのしくみを、3分で。選ばれる様子を動くデモで見られます。</p>
+        <span class="ltags"><i>選ばれるしくみ</i><i>中身</i><i>診断</i></span>
+        <span class="lgo">読む →</span>
+      </a>
+      <a class="lcard glow" href="make-skill.html" style="--c:var(--m-build)">
+        <span class="lnum">02</span>
+        <img src="img/face-build.webp" alt="" width="320" height="320">
+        <h3>スキルの作り方</h3>
+        <p>名前・説明文・手順の3つを書くだけ。入力するとファイルができるスキルメーカーつき。</p>
+        <span class="ltags"><i>3つ書くだけ</i><i>スキルメーカー</i><i>登録</i></span>
+        <span class="lgo">つくる →</span>
+      </a>
+      <a class="lcard glow" href="guide.html" style="--c:var(--m-write)">
+        <span class="lnum">03</span>
+        <img src="img/face-write.webp" alt="" width="320" height="320">
+        <h3>AI会社のつくり方</h3>
+        <p>仕事を書き出して組織図を描き、司令塔とエージェントで回すまでを8ステップで。</p>
+        <span class="ltags"><i>組織図</i><i>司令塔</i><i>エージェント</i><i>守り</i></span>
+        <span class="lgo">はじめる →</span>
+      </a>
     </div>
   </div>
 </section>
@@ -634,7 +664,7 @@ footer .wrap{display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap}
     <div class="closing">
       <img src="img/mode-write.webp" alt="" width="960" height="960" loading="lazy">
       <p>AIに頼む人から、<br>AIのチームを率いる人へ。</p>
-      <a class="btn" href="guide.html">はじめ方ガイドへ →</a>
+      <a class="btn" href="#learn">学ぶページへ →</a>
     </div>
   </div>
 </section>
